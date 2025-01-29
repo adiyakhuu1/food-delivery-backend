@@ -17,7 +17,6 @@ export const auth = async (
         secretKey: process.env.CLERK_SECRET_KEY,
       });
       req.userId = verified.sub;
-      console.log(req.userId);
       next();
       return;
     }

@@ -46,7 +46,7 @@ const user = new mongoose.Schema(
       enum: Object.values(userRole),
       default: userRole.USER,
     },
-    orderedFoods: { type: [mongoose.Schema.Types.ObjectId], ref: "FoodOrder" },
+    orderedFoods: { type: mongoose.Schema.Types.ObjectId, ref: "FoodOrder" },
     isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
