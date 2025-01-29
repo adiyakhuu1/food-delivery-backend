@@ -62,12 +62,20 @@ accountRouter.get("/:id", async (req: Request, res: Response) => {
     console.log(e, "aldaa");
   }
 });
-accountRouter.patch("/:id", auth, async (req: Request, res: Response) => {
+accountRouter.put("/:id", auth, async (req: Request, res: Response) => {
   const id = req.params.id;
-  const body = req.body;
+  const { address } = req.body;
   try {
-    if (id && body) {
-      const user = await account_model.findByIdAndUpdate(id, body);
+    if (id && address) {
+      const user = await account_model.findByIdAndUpdate(
+        id,
+        { address },
+        { new: true }
+      );
+      if (!user) {
+        res.json({ message: "user not found" });
+        return;
+      }
       res.json(user);
       return;
     } else {

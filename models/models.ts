@@ -25,7 +25,7 @@ const food = new mongoose.Schema(
     ingredients: { type: String },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "foodCategory",
+      ref: "category",
     },
   },
   { timestamps: true }
@@ -46,7 +46,7 @@ const user = new mongoose.Schema(
       enum: Object.values(userRole),
       default: userRole.USER,
     },
-    orderedFoods: { type: mongoose.Schema.Types.ObjectId, ref: "FoodOrder" },
+    FoodOrder: { type: mongoose.Schema.Types.ObjectId, ref: "FoodOrder" },
     isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
@@ -89,7 +89,7 @@ const FoodOrder = new mongoose.Schema(
 );
 
 export const foodCategory_model = mongoose.model(
-  "foodCategory",
+  "category",
   foodcatSchema,
   "food-category"
 );
