@@ -62,7 +62,7 @@ accountRouter.get("/:id", async (req: Request, res: Response) => {
     console.log(e, "aldaa");
   }
 });
-accountRouter.put("/:id", auth, async (req: Request, res: Response) => {
+accountRouter.patch("/:id", auth, async (req: Request, res: Response) => {
   const id = req.params.id;
   const body = req.body;
   try {
