@@ -67,3 +67,19 @@ foodOrderRouter.put("/:id", auth, async (req: customRequest, res: Response) => {
     res.json({ message: "aldaa" });
   }
 });
+foodOrderRouter.delete(
+  "/:id",
+  auth,
+  async (req: customRequest, res: Response) => {
+    const { id } = req.params;
+    console.log(req.params.id);
+    try {
+      const Order = await FoodOrder_model.findByIdAndDelete(id);
+      console.log("Deleted", Order);
+      res.json({ message: "success", Order });
+    } catch (e) {
+      console.log(e, "aldaa 2");
+      res.json({ message: "aldaa" });
+    }
+  }
+);
