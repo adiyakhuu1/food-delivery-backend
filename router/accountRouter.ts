@@ -10,17 +10,17 @@ accountRouter.post("/signup", async (req: Request, res: Response) => {
   const userExists = await account_model.findOne({ email });
 
   if (userExists) {
-    res.json({ message: "user exists" });
+    res.json({ message: "user exists", userExists });
     return;
   }
   try {
     const rounds = 10;
     const encryptedPass = await bcrypt.hash(password, rounds);
-    await account_model.create({
+    const userExists = await account_model.create({
       email,
       password: encryptedPass,
     });
-    res.json({ message: "success" });
+    res.json({ message: "success", userExists });
   } catch (e) {
     console.error(e, "aldaa");
   }
