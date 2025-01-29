@@ -13,16 +13,18 @@ accountRouter.post("/signup", async (req: Request, res: Response) => {
     res.json({ message: "user exists", userExists });
     return;
   }
-  try {
-    const rounds = 10;
-    const encryptedPass = await bcrypt.hash(password, rounds);
-    const userExists = await account_model.create({
-      email,
-      password: encryptedPass,
-    });
-    res.json({ message: "success", userExists });
-  } catch (e) {
-    console.error(e, "aldaa");
+  if (password) {
+    try {
+      const rounds = 10;
+      const encryptedPass = await bcrypt.hash(password, rounds);
+      const userExists = await account_model.create({
+        email,
+        password: encryptedPass,
+      });
+      res.json({ message: "success", userExists });
+    } catch (e) {
+      console.error(e, "aldaa");
+    }
   }
 });
 
