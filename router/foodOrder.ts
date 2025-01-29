@@ -40,9 +40,7 @@ foodOrderRouter.post("/", auth, async (req: customRequest, res: Response) => {
 foodOrderRouter.get("/:user", auth, async (req: Request, res: Response) => {
   const { user } = req.params;
   try {
-    const orders = await FoodOrder_model.find({
-      user,
-    }).populate("user");
+    const orders = await FoodOrder_model.find({ id: user }).populate("user");
     res.json(orders);
   } catch (e) {
     console.log(e, "aldaa 2");
