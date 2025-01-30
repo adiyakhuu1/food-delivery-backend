@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { FoodOrder_model } from "../models/models";
+import { account_model, FoodOrder_model } from "../models/models";
 import { verifyToken } from "@clerk/backend";
 import { customRequest } from "./food-category";
 import { isAdmin } from "./middleware";
@@ -35,7 +35,8 @@ foodOrderRouter.post("/", auth, async (req: customRequest, res: Response) => {
   const body = req.body;
   try {
     const newOrder = await FoodOrder_model.create(body);
-    res.json({ message: "success", newOrder });
+    const userExists = await account_model.findById(newOrder.user);
+    res.json({ message: "success", userExists });
   } catch (e) {
     console.log(e, "aldaa 2");
     res.json({ message: "aldaa" });
@@ -50,7 +51,7 @@ foodOrderRouter.get("/:user", auth, async (req: Request, res: Response) => {
     console.log(e, "aldaa 2");
   }
 });
-foodOrderRouter.get("/", auth, async (req: Request, res: Response) => {
+foodOrderRouter.get("/", auth, isAdmin, async (req: Request, res: Response) => {
   // const { user } = req.params;
   try {
     const orders = await FoodOrder_model.find().populate("user");
@@ -88,6 +89,22 @@ foodOrderRouter.delete(
     console.log(req.params.id);
     try {
       const Order = await FoodOrder_model.findByIdAndDelete(id);
+      console.log("Deleted", Order);
+      res.json({ message: "success", Order });
+    } catch (e) {
+      console.log(e, "aldaa 2");
+      res.json({ message: "aldaa" });
+    }
+  }
+);
+foodOrderRouter.delete(
+  "/",
+  auth,
+  isAdmin,
+  async (req: customRequest, res: Response) => {
+    const body = req.body;
+    try {
+      const Order = await FoodOrder_model.deleteMany({ _id: { $in: body } });
       console.log("Deleted", Order);
       res.json({ message: "success", Order });
     } catch (e) {

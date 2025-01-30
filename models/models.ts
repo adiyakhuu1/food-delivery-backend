@@ -69,24 +69,20 @@ const FoodOrderItem = new mongoose.Schema(
 
 // FoodOrder schema
 
-const FoodOrder = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
-    totalPrice: Number,
-    foodOrderItems: [FoodOrderItem],
-    status: {
-      type: String,
-      enum: Object.values(foodOrderStatus),
-      default: foodOrderStatus.PENDING,
-    },
+const FoodOrder = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
   },
-  {
-    timestamps: true,
-  }
-);
+  totalPrice: Number,
+  foodOrderItems: [FoodOrderItem],
+  status: {
+    type: String,
+    enum: Object.values(foodOrderStatus),
+    default: foodOrderStatus.PENDING,
+  },
+  createdAt: { type: Date, default: Date.now, expires: 1800 },
+});
 
 export const foodCategory_model = mongoose.model(
   "category",

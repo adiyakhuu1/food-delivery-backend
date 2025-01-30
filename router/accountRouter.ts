@@ -47,7 +47,7 @@ accountRouter.post("/signin", async (req: Request, res: Response) => {
     console.error(e, "aldaa");
   }
 });
-accountRouter.get("/:id", async (req: Request, res: Response) => {
+accountRouter.get("/:id", auth, async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     if (id) {
