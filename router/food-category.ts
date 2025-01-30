@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { foodCategory_model } from "../models/models";
+import { food_model, foodCategory_model } from "../models/models";
 // import { Token } from "@clerk/backend";
 // import { Auth } from "mongodb";
 import { verifyToken } from "@clerk/backend";
 import { isAdmin } from "./middleware";
+import { populate } from "dotenv";
 // import {auth}
 // import {}
 export type customRequest = Request & {
@@ -58,8 +59,10 @@ FoodCategoryRouter.post(
   isAdmin,
   async (req: customRequest, res: Response) => {
     const body = req.body;
-    const addnew = await foodCategory_model.create(body);
-    res.send(addnew);
+    if (body) {
+      const addnew = await foodCategory_model.create(body);
+      res.json({ addnew });
+    }
   }
 );
 
@@ -69,8 +72,16 @@ FoodCategoryRouter.delete(
   isAdmin,
   async (req: customRequest, res: Response) => {
     const { id } = req.params;
-    const deleteOne1 = await foodCategory_model.findByIdAndDelete(id);
-    res.json(deleteOne1);
+    try {
+      const deleteOne1 = await foodCategory_model.findByIdAndDelete(id);
+      await food_model.deleteMany({
+        category: deleteOne1?._id,
+      });
+      const allCategories = await foodCategory_model.find();
+      res.json({ allCategories });
+    } catch (e) {
+      console.log(e, "aldaa");
+    }
   }
 );
 FoodCategoryRouter.put(
