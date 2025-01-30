@@ -3,14 +3,14 @@ import { foodCategory_model } from "../models/models";
 // import { Token } from "@clerk/backend";
 // import { Auth } from "mongodb";
 import { verifyToken } from "@clerk/backend";
+import { isAdmin } from "./middleware";
 // import {auth}
 // import {}
 export type customRequest = Request & {
   userId?: string;
   email?: string;
-  role?: {
-    role: string;
-  };
+
+  role?: string;
 };
 export const FoodCategoryRouter = Router();
 const auth = async (req: customRequest, res: Response, next: NextFunction) => {
@@ -20,10 +20,11 @@ const auth = async (req: customRequest, res: Response, next: NextFunction) => {
       const verified = await verifyToken(token, {
         secretKey: process.env.CLERK_SECRET_KEY,
       });
-      req.userId = verified.sub;
-      req.email = verified.sub;
-      console.log(verified);
-
+      const userId = verified.sub;
+      const { role } = verified.metadata as { role: string };
+      req.userId = userId;
+      req.role = role;
+      console.log(role);
       next();
       return;
     } catch (e) {
@@ -54,6 +55,7 @@ FoodCategoryRouter.get("/:_id", async (req: customRequest, res: Response) => {
 FoodCategoryRouter.post(
   "/addnew",
   auth,
+  isAdmin,
   async (req: customRequest, res: Response) => {
     const body = req.body;
     const addnew = await foodCategory_model.create(body);
@@ -64,6 +66,7 @@ FoodCategoryRouter.post(
 FoodCategoryRouter.delete(
   "/:id",
   auth,
+  isAdmin,
   async (req: customRequest, res: Response) => {
     const { id } = req.params;
     const deleteOne1 = await foodCategory_model.findByIdAndDelete(id);
@@ -73,6 +76,7 @@ FoodCategoryRouter.delete(
 FoodCategoryRouter.put(
   "/:id",
   auth,
+  isAdmin,
   async (req: customRequest, res: Response) => {
     const { id } = req.params;
     const { name } = req.query;

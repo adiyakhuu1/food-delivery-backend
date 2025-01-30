@@ -4,6 +4,7 @@ import { food_model } from "../models/models";
 import { exists } from "fs";
 import { error } from "console";
 import { verifyToken } from "@clerk/backend";
+import { isAdmin } from "./middleware";
 
 export const foodRouter = Router();
 const auth = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,16 +27,21 @@ foodRouter.get("/", async (req: Request, res: Response) => {
   const result = await food_model.find();
   res.json(result);
 });
-foodRouter.delete("/:_id", auth, async (req: Request, res: Response) => {
-  const params = req.params;
-  try {
-    await food_model.findByIdAndDelete(params);
-    res.json({ message: "success" });
-  } catch (err) {
-    console.error("aldaa", err, "aldaa");
-    res.json({ message: "aldaa" });
+foodRouter.delete(
+  "/:_id",
+  auth,
+  isAdmin,
+  async (req: Request, res: Response) => {
+    const params = req.params;
+    try {
+      await food_model.findByIdAndDelete(params);
+      res.json({ message: "success" });
+    } catch (err) {
+      console.error("aldaa", err, "aldaa");
+      res.json({ message: "aldaa" });
+    }
   }
-});
+);
 foodRouter.get("/:category", async (req: Request, res: Response) => {
   if (!req.params) {
     res.json({ message: "no params" });
@@ -54,11 +60,13 @@ foodRouter.get("/:foodId", async (req: Request, res: Response) => {
   const result = await food_model.find(params);
   res.json(result);
 });
-foodRouter.patch("/:_id", auth, async (req: Request, res: Response) => {
+foodRouter.put("/:_id", auth, isAdmin, async (req: Request, res: Response) => {
   const params = req.params;
   const body = req.body;
   try {
-    const newchange = await food_model.findByIdAndUpdate(params, body);
+    const newchange = await food_model.findByIdAndUpdate(params, body, {
+      new: true,
+    });
     res.json({ message: "success", newchange });
   } catch (e) {
     console.log(e, "aldaa");
@@ -66,7 +74,7 @@ foodRouter.patch("/:_id", auth, async (req: Request, res: Response) => {
   }
 });
 
-foodRouter.post("/", auth, async (req: Request, res: Response) => {
+foodRouter.post("/", auth, isAdmin, async (req: Request, res: Response) => {
   const body = req.body;
   try {
     if (!body) {

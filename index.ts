@@ -34,11 +34,6 @@ const foodCategory = new mongoose.Schema(
   }
 );
 
-export const isAdmin = async (
-  req: customRequest,
-  res: Response,
-  next: NextFunction
-) => {};
 const user = new mongoose.Schema(
   {
     email: String,
@@ -70,5 +65,4 @@ app.use("/foodOrderItem", foodOrderItemRouter);
 
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
-  console.log(URI);
 });
