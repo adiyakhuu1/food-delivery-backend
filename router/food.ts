@@ -5,15 +5,21 @@ import { exists } from "fs";
 import { error } from "console";
 import { verifyToken } from "@clerk/backend";
 import { isAdmin } from "./middleware";
+import { customRequest } from "./food-category";
 
 export const foodRouter = Router();
-const auth = async (req: Request, res: Response, next: NextFunction) => {
+const auth = async (req: customRequest, res: Response, next: NextFunction) => {
   const token = req.get("auth");
   if (token) {
     try {
-      await verifyToken(token, {
+      const verified = await verifyToken(token, {
         secretKey: process.env.CLERK_SECRET_KEY,
       });
+      const userId = verified.sub;
+      const { role } = verified.metadata as { role: string };
+      req.userId = userId;
+      req.role = role;
+      console.log(role);
       next();
       return;
     } catch (e) {
@@ -81,7 +87,7 @@ foodRouter.post("/", auth, isAdmin, async (req: Request, res: Response) => {
       res.json({ message: "aldaa" });
     }
     const newitem = await food_model.create(body);
-    res.json({ message: "success" });
+    res.json({ message: "success", newitem });
   } catch (e) {
     res.json({ message: "aldaa" });
     console.error(e, "aldaa");
