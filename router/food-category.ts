@@ -61,7 +61,7 @@ FoodCategoryRouter.post(
     const body = req.body;
     if (body) {
       const addnew = await foodCategory_model.create(body);
-      res.json({ addnew });
+      res.json(addnew);
     }
   }
 );
