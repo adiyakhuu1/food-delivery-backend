@@ -78,7 +78,7 @@ FoodCategoryRouter.delete(
         category: deleteOne1?._id,
       });
       const allCategories = await foodCategory_model.find();
-      res.json({ allCategories });
+      res.json(allCategories);
     } catch (e) {
       console.log(e, "aldaa");
     }
